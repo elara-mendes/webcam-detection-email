@@ -1,5 +1,7 @@
 # Detecção de Objetos e Envio por Email
 
+[English Ver.](README_en.md)
+
 Este projeto utiliza **YOLO** para detectar objetos em imagens capturadas pela webcam e envia as imagens detectadas por e-mail automaticamente.
 
 ## 🚀 Tecnologias Utilizadas
