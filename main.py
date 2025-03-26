@@ -1,5 +1,8 @@
 import cv2, time, math
 from ultralytics import YOLO
+from utils.send_mail import email_send
+import os, glob
+from threading import Thread
 
 model = YOLO("yolo11n.pt")
 
@@ -18,6 +21,12 @@ classNames = ["person", "bicycle", "car", "motorbike", "aeroplane", "bus", "trai
 webcam = cv2.VideoCapture(0) # Select Camera
 status_webcam = [0, 0]
 last_detected_frame = None
+count = 0
+
+def clean_folder():
+    images = glob.glob("images/*")
+    for image in images:
+        os.remove(image)
 
 time.sleep(1)
 while True:
@@ -47,7 +56,7 @@ while True:
 
             if status_webcam == [1, 0] and last_detected_frame is not None:
                 if time.time() - last_detected_frame.any() > 2:
-                    cv2.imwrite("image.png", last_detected_frame)
+                    cv2.imwrite(f"images/{count}.png", last_detected_frame)
                     last_detected_frame = time.time()
 
             org = [x1, y1]
@@ -60,7 +69,21 @@ while True:
 
     cv2.imshow("frame", frame)
 
+    # Send mail
+    index = glob.glob("images/*.png")
+    if len(index) > 3:
+        get_photo = int(len(index) / 2)
+        index = index[get_photo]
+        email_thread = Thread(target=email_send, args=(index, ))
+        email_thread.daemon = True
+        email_thread.start()
+
+    count += 1
+
     if cv2.waitKey(1) & 0xFF == ord('q'):
+        clean_thread = Thread(target=clean_folder)
+        clean_thread.daemon = True
+        clean_thread.start()
         break
 
 webcam.release()
