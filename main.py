@@ -7,6 +7,9 @@ import queue
 
 model = YOLO("yolo11n.pt")
 
+if not os.path.exists("images"):
+    os.makedirs("images")
+
 classNames = ["person", "bicycle", "car", "motorbike", "aeroplane", "bus", "train", "truck", "boat",
               "traffic light", "fire hydrant", "stop sign", "parking meter", "bench", "bird", "cat",
               "dog", "horse", "sheep", "cow", "elephant", "bear", "zebra", "giraffe", "backpack", "umbrella",
